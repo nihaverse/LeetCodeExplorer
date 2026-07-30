@@ -1,0 +1,22 @@
+:root{
+  --background:#0d0d0d;
+
+  --surface:#19120a;
+  --surface-light:#221a12;
+
+  --card:#261e15;
+
+  --primary:#ffa116;
+  --primary-hover:#ffb84d;
+
+  --secondary:#4bdcc6;
+
+  --text:#f0e0d1;
+  --muted:#9ca3af;
+
+  --border:rgba(255,255,255,0.08);
+
+  --success:#22c55e;
+  --warning:#facc15;
+  --danger:#ef4444;
+}
