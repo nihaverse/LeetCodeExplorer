@@ -3,6 +3,8 @@ import TopNavbar from "../components/layout/TopNavbar";
 import SearchBar from "../components/dashboard/SearchBar";
 import ProfileCard from "../components/dashboard/ProfileCard";
 import StatsGrid from "../components/dashboard/StatsGrid";
+import DifficultyChart from "../components/dashboard/DifficultyChart";
+import ComparisonSection from "../components/dashboard/ComparisonSection";
 
 function Dashboard(){
 return(
@@ -19,9 +21,11 @@ return(
     Analyze your LeetCode progress, compare profiles,
     and discover where you stand among other programmers.
   </p>
-        <SearchBar />
-        <ProfileCard />
-        <StatsGrid />
+    <SearchBar />
+    <ProfileCard />
+    <StatsGrid />
+    <DifficultyChart />
+    <ComparisonSection />
 </div>
 </div>
 </div>
