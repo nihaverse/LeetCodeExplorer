@@ -3,8 +3,8 @@ import SearchBar from "../dashboard/SearchBar";
 
 function TopNavbar({ onSearch, loading }) {
   return (
-    <header className="fixed left-72 right-0 top-0 z-40 h-20 border-b border-border bg-background/85 backdrop-blur-xl">
-      <div className="flex h-full items-center justify-between px-8">
+    <header className="fixed left-0 right-0 top-0 z-40 h-20 border-b border-border bg-background/85 backdrop-blur-xl lg:left-72">
+      <div className="flex h-full items-center justify-between gap-4 px-4 lg:px-8">
         <SearchBar onSearch={onSearch} loading={loading} />
 
         <div className="flex items-center gap-4">

@@ -15,7 +15,7 @@ const menu = [
 
 function Sidebar() {
   return (
-    <aside className="fixed left-0 top-0 z-50 flex h-screen w-72 flex-col border-r border-border bg-surface">
+    <aside className="fixed left-0 top-0 z-50 hidden h-screen w-72 flex-col border-r border-border bg-surface lg:flex">
       {/* Brand */}
       <div className="flex items-center gap-3 px-6 py-7">
         <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-background">

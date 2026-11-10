@@ -21,7 +21,7 @@ function SearchBar({ onSearch, loading = false }) {
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder="Enter LeetCode username..."
-        className="flex-1 bg-transparent text-text outline-none placeholder:text-muted"
+        className="min-w-0 flex-1 bg-transparent text-text outline-none placeholder:text-muted"
       />
       <button
         type="submit"
