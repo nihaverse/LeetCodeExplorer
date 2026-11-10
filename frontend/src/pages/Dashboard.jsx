@@ -45,6 +45,17 @@ function Dashboard() {
             </p>
           )}
 
+          {!user && !loading && !error && (
+            <div className="mt-8 rounded-3xl border border-dashed border-border p-10 text-center">
+              <p className="font-display text-xl font-semibold">
+                Search a LeetCode username to begin
+              </p>
+              <p className="mt-2 text-muted">
+                Type a username in the top bar and press Analyze.
+              </p>
+            </div>
+          )}
+
           {user && (
             <div className="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
               <div className="xl:col-span-2">
