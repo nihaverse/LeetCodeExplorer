@@ -9,6 +9,7 @@ import useLeetCodeUser from "../hooks/useLeetCodeUser";
 import MomentumChart from "../components/dashboard/MomentumChart";
 import RatingHistoryChart from "../components/dashboard/RatingHistoryChart";
 import CoachingSignals from "../components/dashboard/CoachingSignals";
+import TodaySignal from "../components/dashboard/TodaySignal";
 
 function Dashboard() {
   const [username, setUsername] = useState("");
@@ -45,8 +46,11 @@ function Dashboard() {
           )}
 
           {user && (
-            <div className="mt-8">
-              <ProfileCard user={user} />
+            <div className="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
+              <div className="xl:col-span-2">
+                <ProfileCard user={user} />
+              </div>
+              <TodaySignal user={user} />
             </div>
           )}
           {user && (
