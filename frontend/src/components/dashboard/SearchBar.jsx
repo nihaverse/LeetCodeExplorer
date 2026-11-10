@@ -1,37 +1,37 @@
-function SearchBar() {
+import { useState } from "react";
+import { Search } from "lucide-react";
+
+function SearchBar({ onSearch, loading = false }) {
+  const [value, setValue] = useState("");
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const username = value.trim();
+    if (username) onSearch?.(username);
+  }
+
   return (
-    <div className="mt-8 flex flex-col md:flex-row gap-4">
+    <form
+      onSubmit={handleSubmit}
+      className="flex w-full max-w-2xl items-center gap-3 rounded-2xl border border-border bg-surface-light py-2 pl-4 pr-2 transition-colors focus-within:border-primary"
+    >
+      <Search size={18} className="shrink-0 text-primary" />
       <input
         type="text"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
         placeholder="Enter LeetCode username..."
-        className="
-          flex-1
-          px-5
-          py-4
-          rounded-xl
-          bg-[#1A1A1A]
-          border
-          border-[#333]
-          outline-none
-          focus:border-[#FFA116]
-          transition
-        "
+        className="flex-1 bg-transparent text-text outline-none placeholder:text-muted"
       />
       <button
-        className="
-          bg-[#FFA116]
-          hover:bg-orange-500
-          px-8
-          py-2
-          rounded-xl
-          font-semibold
-          text-black
-          transition
-        "
+        type="submit"
+        disabled={loading}
+        className="rounded-xl bg-primary px-6 py-3 font-semibold text-background transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
       >
-        Search
+        {loading ? "Analyzing..." : "Analyze"}
       </button>
-    </div>
+    </form>
   );
 }
+
 export default SearchBar;

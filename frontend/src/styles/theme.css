@@ -1,22 +1,42 @@
-:root{
-  --background:#0d0d0d;
+:root {
+  /* surfaces (warm brown) */
+  --background: #1a1310;
+  --surface: #221a15;
+  --surface-light: #2a2019;
+  --card: #261d17;
 
-  --surface:#19120a;
-  --surface-light:#221a12;
+  /* brand */
+  --primary: #e07b4c;
+  --primary-hover: #e98f63;
+  --secondary: #7aab9b;
+  --gold: #e6b84a;
+  --coral: #d9604f;
 
-  --card:#261e15;
+  /* text */
+  --text: #f4e8dc;
+  --muted: #a89888;
 
-  --primary:#ffa116;
-  --primary-hover:#ffb84d;
+  /* lines */
+  --border: rgba(255, 255, 255, 0.08);
 
-  --secondary:#4bdcc6;
+  /* difficulty / status */
+  --success: #7aab9b;
+  --warning: #e07b4c;
+  --danger: #d9604f;
+}
 
-  --text:#f0e0d1;
-  --muted:#9ca3af;
-
-  --border:rgba(255,255,255,0.08);
-
-  --success:#22c55e;
-  --warning:#facc15;
-  --danger:#ef4444;
+/* Lets Tailwind utilities use these tokens: bg-background, text-primary, border-border... */
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-light: var(--surface-light);
+  --color-card: var(--card);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-gold: var(--gold);
+  --color-coral: var(--coral);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
 }

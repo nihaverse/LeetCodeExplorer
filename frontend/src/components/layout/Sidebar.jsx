@@ -1,66 +1,51 @@
 import {
-  LayoutDashboard,
   Code2,
-  Trophy,
+  LayoutDashboard,
+  Users,
   BarChart3,
-  Settings,
+  Bookmark,
 } from "lucide-react";
 
 const menu = [
-  {
-    title: "Dashboard",
-    icon: LayoutDashboard,
-    active: false,
-  },
-  {
-    title: "Problems",
-    icon: Code2,
-    active: true,
-  },
-  {
-    title: "Contests",
-    icon: Trophy,
-    active: false,
-  },
-  {
-    title: "Ranking",
-    icon: BarChart3,
-    active: false,
-  },
-  {
-    title: "Settings",
-    icon: Settings,
-    active: false,
-  },
+  { title: "Profile dashboard", icon: LayoutDashboard, active: true },
+  { title: "Compare users", icon: Users, active: false },
+  { title: "Visual insights", icon: BarChart3, active: false },
+  { title: "Saved profiles", icon: Bookmark, active: false },
 ];
 
 function Sidebar() {
   return (
-    <aside className="fixed left-0 top-0 z-50 h-screen w-72 border-r border-white/10 bg-[(--surface)] backdrop-blur-xl shadow-2xl flex flex-col">
-
-      <div className="px-6 py-8">
-
-        <h1 className="font-mono text-xl tracking-[0.25em] text-[(--primary)] font-bold">
-          LC Explorer
-        </h1>
-        <p className="text-xs text-[(--muted)] mt-1">
-          Elite Tier
-        </p>
-
+    <aside className="fixed left-0 top-0 z-50 flex h-screen w-72 flex-col border-r border-border bg-surface">
+      {/* Brand */}
+      <div className="flex items-center gap-3 px-6 py-7">
+        <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-background">
+          <Code2 size={22} />
+          <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-secondary" />
+        </div>
+        <div>
+          <h1 className="font-display text-lg font-semibold leading-tight">
+            Progress Explorer
+          </h1>
+          <p className="text-xs text-muted">LeetCode analytics</p>
+        </div>
       </div>
 
-      <nav className="flex-1 px-3 space-y-2">
+      {/* Navigation */}
+      <p className="px-6 pb-3 pt-4 text-xs font-semibold tracking-[0.2em] text-muted">
+        COMMAND CENTER
+      </p>
 
-              {menu.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                      <button
-                          key={item.title}
-                          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200
-              ${
+      <nav className="space-y-2 px-4">
+        {menu.map((item) => {
+          const Icon = item.icon;
+
+          return (
+            <button
+              key={item.title}
+              className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors duration-200 ${
                 item.active
-                  ? "bg-orange-500/10 border-r-4 border-orange-500 text-orange-400 font-semibold"
-                  : "text-gray-400 hover:bg-white/5 hover:text-orange-400"
+                  ? "bg-primary font-semibold text-background"
+                  : "text-muted hover:bg-white/5 hover:text-text"
               }`}
             >
               <Icon size={20} />
@@ -68,22 +53,7 @@ function Sidebar() {
             </button>
           );
         })}
-          </nav>
-          <div className="border-t border-white/10 p-6">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center font-bold text-black">
-            N
-          </div>
-          <div>
-            <p className="font-semibold">
-              Niharika
-            </p>
-            <p className="text-xs text-gray-500">
-              Frontend Developer
-            </p>
-          </div>
-        </div>
-      </div>
+      </nav>
     </aside>
   );
 }

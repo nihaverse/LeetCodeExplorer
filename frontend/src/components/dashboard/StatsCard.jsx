@@ -1,15 +1,22 @@
-function StatCard({ title, value, color }) {
+function StatCard({ icon: Icon, iconClass, title, value, unit, note }) {
   return (
-    <div className="bg-[#19120A] border border-white/10 rounded-2xl p-6 shadow-lg hover:scale-[1.02] transition duration-300">
-      <p className="text-sm text-gray-400">
-        {title}
-      </p>
-      <h2
-        className="text-4xl font-bold mt-4"
-        style={{ color }}
+    <div className="rounded-2xl border border-border bg-surface p-6 transition-colors hover:border-primary/40">
+      <div
+        className={`flex h-11 w-11 items-center justify-center rounded-xl ${iconClass}`}
       >
+        <Icon size={20} />
+      </div>
+
+      <p className="mt-6 text-muted">{title}</p>
+
+      <p className="mt-2 font-display text-4xl font-bold">
         {value}
-      </h2>
+        {unit && (
+          <span className="ml-2 text-xl font-medium text-muted">{unit}</span>
+        )}
+      </p>
+
+      {note && <p className="mt-2 text-sm text-muted">{note}</p>}
     </div>
   );
 }

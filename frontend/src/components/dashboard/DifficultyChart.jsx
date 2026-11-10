@@ -1,61 +1,52 @@
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-  Legend,
-} from "recharts";
-const data = [
-  {
-    difficulty: "Easy",
-    solved: 185,
-    color: "var(--success)",
-  },
-  {
-    difficulty: "Medium",
-    solved: 170,
-    color: "var(--warning)",
-  },
-  {
-    difficulty: "Hard",
-    solved: 72,
-    color: "var(--danger)",
-  },
-];
-function DifficultyChart() {
-  return (
-    <div className="mt-8 rounded-2xl bg-[(--surface)] border border-[(--border)] p-6 shadow-lg">
-      <h2 className="text-2xl font-semibold mb-6">
-        Difficulty Distribution
-      </h2>
-      <div className="h-80">
+import { Layers } from "lucide-react";
 
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={data}
-              dataKey="solved"
-              nameKey="difficulty"
-              cx="50%"
-              cy="50%"
-              innerRadius={70}
-              outerRadius={110}
-              paddingAngle={3}
-            >
-              {data.map((entry) => (
-                <Cell
-                  key={entry.difficulty}
-                  fill={entry.color}
+function DifficultyChart({ solved }) {
+  const rows = [
+    { label: "Easy", count: solved.easy, barClass: "bg-secondary" },
+    { label: "Medium", count: solved.medium, barClass: "bg-primary" },
+    { label: "Hard", count: solved.hard, barClass: "bg-coral" },
+  ];
+
+  const total = solved.total || 0;
+
+  return (
+    <div className="rounded-3xl border border-border bg-surface p-6">
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-xs font-semibold tracking-[0.2em] text-secondary">
+            SKILL STACK
+          </p>
+          <h2 className="mt-2 font-display text-2xl font-semibold">
+            Difficulty mix
+          </h2>
+        </div>
+        <Layers size={22} className="text-primary" />
+      </div>
+
+      <div className="mt-8 space-y-6">
+        {rows.map(({ label, count, barClass }) => {
+          const percent = total ? Math.round((count / total) * 100) : 0;
+
+          return (
+            <div key={label}>
+              <div className="flex items-center justify-between">
+                <span className="font-medium">{label}</span>
+                <span className="text-muted">
+                  {count} · {percent}%
+                </span>
+              </div>
+              <div className="mt-2 h-2 rounded-full bg-white/5">
+                <div
+                  className={`h-2 rounded-full ${barClass}`}
+                  style={{ width: `${percent}%` }}
                 />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
+
 export default DifficultyChart;

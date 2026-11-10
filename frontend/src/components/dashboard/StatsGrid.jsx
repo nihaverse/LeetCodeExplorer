@@ -1,42 +1,47 @@
+import { CheckCircle2, Activity, Flame, Target } from "lucide-react";
 import StatCard from "./StatsCard";
 
-function StatsGrid() {
+function StatsGrid({ user }) {
+  const { solved, contest, streak, acceptanceRate } = user;
+
   const stats = [
     {
-      title: "Total Solved",
-      value: 427,
-      color: "#FFA116",
+      title: "Problems solved",
+      value: solved.total,
+      note: `${solved.easy} easy · ${solved.medium} medium · ${solved.hard} hard`,
+      icon: CheckCircle2,
+      iconClass: "bg-primary/15 text-primary",
     },
     {
-      title: "Easy",
-      value: 185,
-      color: "#00C853",
+      title: "Contest rating",
+      value: contest ? contest.rating.toLocaleString() : "—",
+      note: contest
+        ? `Over ${contest.attendedCount} contests`
+        : "No contests yet",
+      icon: Activity,
+      iconClass: "bg-secondary/15 text-secondary",
     },
     {
-      title: "Medium",
-      value: 170,
-      color: "#FFD54F",
+      title: "Current streak",
+      value: streak ?? "—",
+      unit: streak != null ? "days" : undefined,
+      note: "Show up, solve, repeat.",
+      icon: Flame,
+      iconClass: "bg-gold/15 text-gold",
     },
     {
-      title: "Hard",
-      value: 72,
-      color: "#FF5252",
-      },
-     {
-      title: "Acceptance Rate",
-      value: "98.4%",
-      color: "blue",
-      }
+      title: "Acceptance rate",
+      value: acceptanceRate != null ? `${acceptanceRate}%` : "—",
+      note: "Accepted ÷ all submissions",
+      icon: Target,
+      iconClass: "bg-coral/15 text-coral",
+    },
   ];
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mt-8">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
       {stats.map((item) => (
-        <StatCard
-          key={item.title}
-          title={item.title}
-          value={item.value}
-          color={item.color}
-        />
+        <StatCard key={item.title} {...item} />
       ))}
     </div>
   );
