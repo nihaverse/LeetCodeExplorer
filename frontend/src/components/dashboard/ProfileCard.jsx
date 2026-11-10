@@ -6,7 +6,7 @@ function ProfileCard({ user }) {
   const subtitle = [name, country].filter(Boolean).join(" · ");
 
   return (
-    <div className="rounded-3xl border border-border bg-surface p-6">
+    <div className="h-full rounded-3xl border border-border bg-surface p-6">
       <div className="flex flex-wrap items-center gap-6">
         {/* Avatar */}
         <div className="relative">
