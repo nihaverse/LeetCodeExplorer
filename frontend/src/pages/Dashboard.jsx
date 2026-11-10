@@ -8,6 +8,7 @@ import ComparisonSection from "../components/dashboard/ComparisonSection";
 import useLeetCodeUser from "../hooks/useLeetCodeUser";
 import MomentumChart from "../components/dashboard/MomentumChart";
 import RatingHistoryChart from "../components/dashboard/RatingHistoryChart";
+import CoachingSignals from "../components/dashboard/CoachingSignals";
 
 function Dashboard() {
   const [username, setUsername] = useState("");
@@ -62,14 +63,21 @@ function Dashboard() {
             </div>
           )}
           {user && (
-            <div className="mt-8">
-              <RatingHistoryChart
-                history={user.contestHistory}
-                currentRating={user.contest?.rating}
-              />
+            <div className="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-12">
+              <div className="xl:col-span-5">
+                <RatingHistoryChart
+                  history={user.contestHistory}
+                  currentRating={user.contest?.rating}
+                />
+              </div>
+              <div className="xl:col-span-4">
+                <ComparisonSection user={user} />
+              </div>
+              <div className="xl:col-span-3">
+                <CoachingSignals user={user} />
+              </div>
             </div>
           )}
-          <ComparisonSection />
         </main>
       </div>
     </div>
