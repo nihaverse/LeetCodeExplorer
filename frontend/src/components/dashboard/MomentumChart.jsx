@@ -69,6 +69,7 @@ function MomentumChart({ weeks }) {
               stroke="var(--primary)"
               strokeWidth={3}
               fill="url(#momentumFill)"
+              isAnimationActive={false}
             />
           </AreaChart>
         </ResponsiveContainer>

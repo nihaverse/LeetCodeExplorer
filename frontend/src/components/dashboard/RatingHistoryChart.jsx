@@ -76,6 +76,7 @@ function RatingHistoryChart({ history, currentRating }) {
                 dataKey="rating"
                 fill="var(--secondary)"
                 radius={[6, 6, 0, 0]}
+                isAnimationActive={false}
               />
             </BarChart>
           </ResponsiveContainer>
