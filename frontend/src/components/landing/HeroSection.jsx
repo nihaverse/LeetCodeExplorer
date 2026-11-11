@@ -228,7 +228,7 @@ useGSAP(
             className="mt-9 flex flex-wrap items-center gap-4">
             <Link
               to="/dashboard"
-              className="group flex items-center gap-3 rounded-xl bg-primary px-7 py-4 font-semibold text-background shadow-lg shadow-primary/20 transition-all duration-300 hover:-translate-y-1 hover:bg-primary-hover hover:shadow-primary/30"
+              className="group flex items-center gap-3 rounded-xl bg-primary px-7 py-4 font-semibold text-background shadow-lg shadow-primary/20 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:bg-primary-hover hover:shadow-[0_12px_35px_rgba(224,123,76,0.35)] active:translate-y-0 active:scale-[0.98]"
             >
               Explore Dashboard
               <ArrowRight
@@ -239,7 +239,7 @@ useGSAP(
 
             <a
               href="#features"
-              className="group flex items-center gap-2 rounded-xl border border-border bg-white/[0.03] px-7 py-4 font-semibold text-text transition-all duration-300 hover:border-primary/40 hover:bg-primary/5"
+              className="group flex items-center gap-2 rounded-xl border border-border bg-white/[0.03] px-7 py-4 font-semibold text-text transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:border-primary/50 hover:bg-primary/10 active:translate-y-0 active:scale-[0.98]"
             >
               Discover Features
               <ArrowUpRight

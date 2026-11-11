@@ -135,7 +135,14 @@ function FeaturesSection() {
 
       const heading = section.querySelector("[data-features-heading]");
       const grid = section.querySelector("[data-feature-grid]");
-      const cards = section.querySelectorAll("[data-feature-card]");
+          const cards = section.querySelectorAll("[data-feature-card]");
+          
+        // Respect the user's reduced-motion preference.
+        const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+        ).matches;
+
+        if (prefersReducedMotion) return;
 
       // Heading reveal animation
       gsap.from(heading, {
@@ -168,56 +175,92 @@ function FeaturesSection() {
       // Store event-listener cleanup functions
       const cleanupFunctions = [];
 
-      // Interactive card hover animations
-      cards.forEach((card) => {
-        const icon = card.querySelector("[data-feature-icon]");
+      
+// Interactive 3D card animations
+cards.forEach((card) => {
+  const icon = card.querySelector("[data-feature-icon]");
 
-        const hoverIn = () => {
-          gsap.to(card, {
-            y: -8,
-            scale: 1.015,
-            duration: 0.3,
-            ease: "power2.out",
-          });
+  const handlePointerMove = (event) => {
+    const rect = card.getBoundingClientRect();
 
-          if (icon) {
-            gsap.to(icon, {
-              y: -3,
-              rotate: 5,
-              scale: 1.08,
-              duration: 0.3,
-              ease: "power2.out",
-            });
-          }
-        };
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+    
+    // Update the cursor spotlight position.
+    card.style.setProperty("--spotlight-x", `${x * 100}%`);
+    card.style.setProperty("--spotlight-y", `${y * 100}%`);  
 
-        const hoverOut = () => {
-          gsap.to(card, {
-            y: 0,
-            scale: 1,
-            duration: 0.35,
-            ease: "power2.out",
-          });
+    // Convert cursor position into rotation values.
+    const rotateY = (x - 0.5) * 14;
+    const rotateX = (0.5 - y) * 14;
 
-          if (icon) {
-            gsap.to(icon, {
-              y: 0,
-              rotate: 0,
-              scale: 1,
-              duration: 0.35,
-              ease: "power2.out",
-            });
-          }
-        };
+    gsap.to(card, {
+      rotationX: rotateX,
+      rotationY: rotateY,
+      duration: 0.25,
+      ease: "power2.out",
+      overwrite: "auto",
+    });
+  };
 
-        card.addEventListener("mouseenter", hoverIn);
-        card.addEventListener("mouseleave", hoverOut);
+  const hoverIn = () => {
+    gsap.to(card, {
+      y: -5,
+      z: 15,
+      scale: 1.015,
+      duration: 0.35,
+      ease: "power2.out",
+      transformPerspective: 900,
+    });
 
-        cleanupFunctions.push(() => {
-          card.removeEventListener("mouseenter", hoverIn);
-          card.removeEventListener("mouseleave", hoverOut);
-        });
+    if (icon) {
+      gsap.to(icon, {
+        y: -3,
+        z: 12,
+        rotate: 5,
+        scale: 1.08,
+        duration: 0.3,
+        ease: "power2.out",
       });
+    }
+  };
+
+  const hoverOut = () => {
+    gsap.to(card, {
+      rotationX: 0,
+      rotationY: 0,
+      y: 0,
+      z: 0,
+      scale: 1,
+      duration: 0.55,
+      ease: "power3.out",
+      overwrite: "auto",
+    });
+
+    if (icon) {
+      gsap.to(icon, {
+        y: 0,
+        z: 0,
+        rotate: 0,
+        scale: 1,
+        duration: 0.4,
+        ease: "power2.out",
+      });
+    }
+  };
+
+  card.addEventListener("mouseenter", hoverIn);
+  card.addEventListener("mousemove", handlePointerMove);
+  card.addEventListener("mouseleave", hoverOut);
+
+  // Preserve the existing event-listener cleanup.
+  cleanupFunctions.push(() => {
+    card.removeEventListener("mouseenter", hoverIn);
+    card.removeEventListener("mousemove", handlePointerMove);
+    card.removeEventListener("mouseleave", hoverOut);
+  });
+});
+
 
       // Clean up all event listeners when the effect is reverted
       return () => {
@@ -250,8 +293,8 @@ function FeaturesSection() {
         />
 
         <div
-          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
-          data-feature-grid
+        className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 [perspective:1000px]"
+        data-feature-grid
         >
           {features.map((feature, index) => {
             const Icon = feature.icon;
@@ -260,9 +303,18 @@ function FeaturesSection() {
               <div
                 key={feature.title}
                 data-feature-card
-                className="group relative overflow-hidden rounded-2xl border border-border bg-card/80 p-7 transition-colors duration-300 hover:border-primary/40 hover:bg-surface-light"
+                className="group relative overflow-hidden rounded-2xl border border-border bg-card/80 p-7 [transform-style:preserve-3d] transition-colors duration-300 hover:border-primary/40 hover:bg-surface-light"
               >
                 <div className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-primary/0 blur-3xl transition-all duration-300 group-hover:bg-primary/10" />
+                
+                {/* Cursor-following spotlight */}
+                <div
+                className="pointer-events-none absolute inset-0 z-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                style={{
+                    background:
+                    "radial-gradient(350px circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(224, 123, 76, 0.16), transparent 70%)",
+                }}
+                />    
 
                 <div
                   className={`relative mb-6 flex h-12 w-12 items-center justify-center rounded-xl ${feature.iconBg}`}
