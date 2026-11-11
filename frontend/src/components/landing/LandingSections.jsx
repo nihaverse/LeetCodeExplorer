@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import {
   Activity,
@@ -18,6 +17,12 @@ import {
   Trophy,
   Zap,
 } from "lucide-react";
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const features = [
   {
@@ -94,9 +99,13 @@ const steps = [
   },
 ];
 
-function SectionHeading({ eyebrow, title, description }) {
+function SectionHeading({ eyebrow, title, description, headingAttribute}) {
   return (
-    <div className="mx-auto mb-14 max-w-2xl text-center">
+    <div
+        data-features-heading
+        {...(headingAttribute ? { [headingAttribute]: "" } : {})}
+        className="mx-auto mb-14 max-w-2xl text-center"
+        >
       <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
         <Sparkles size={14} />
         {eyebrow}
@@ -113,9 +122,114 @@ function SectionHeading({ eyebrow, title, description }) {
   );
 }
 
+
 function FeaturesSection() {
+  const sectionRef = useRef(null);
+
+  useGSAP(
+    () => {
+      const section = sectionRef.current;
+
+      // Safety check
+      if (!section) return;
+
+      const heading = section.querySelector("[data-features-heading]");
+      const grid = section.querySelector("[data-feature-grid]");
+      const cards = section.querySelectorAll("[data-feature-card]");
+
+      // Heading reveal animation
+      gsap.from(heading, {
+        y: 45,
+        opacity: 0,
+        duration: 0.9,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: section,
+          start: "top 75%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
+      // Feature cards reveal animation
+      gsap.from(cards, {
+        y: 55,
+        opacity: 0,
+        scale: 0.96,
+        duration: 0.8,
+        stagger: 0.13,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: grid,
+          start: "top 80%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
+      // Store event-listener cleanup functions
+      const cleanupFunctions = [];
+
+      // Interactive card hover animations
+      cards.forEach((card) => {
+        const icon = card.querySelector("[data-feature-icon]");
+
+        const hoverIn = () => {
+          gsap.to(card, {
+            y: -8,
+            scale: 1.015,
+            duration: 0.3,
+            ease: "power2.out",
+          });
+
+          if (icon) {
+            gsap.to(icon, {
+              y: -3,
+              rotate: 5,
+              scale: 1.08,
+              duration: 0.3,
+              ease: "power2.out",
+            });
+          }
+        };
+
+        const hoverOut = () => {
+          gsap.to(card, {
+            y: 0,
+            scale: 1,
+            duration: 0.35,
+            ease: "power2.out",
+          });
+
+          if (icon) {
+            gsap.to(icon, {
+              y: 0,
+              rotate: 0,
+              scale: 1,
+              duration: 0.35,
+              ease: "power2.out",
+            });
+          }
+        };
+
+        card.addEventListener("mouseenter", hoverIn);
+        card.addEventListener("mouseleave", hoverOut);
+
+        cleanupFunctions.push(() => {
+          card.removeEventListener("mouseenter", hoverIn);
+          card.removeEventListener("mouseleave", hoverOut);
+        });
+      });
+
+      // Clean up all event listeners when the effect is reverted
+      return () => {
+        cleanupFunctions.forEach((cleanup) => cleanup());
+      };
+    },
+    { scope: sectionRef }
+  );
+
   return (
     <section
+      ref={sectionRef}
       id="features"
       className="relative scroll-mt-24 overflow-hidden px-6 py-24 lg:py-32"
     >
@@ -135,19 +249,24 @@ function FeaturesSection() {
           description="Your LeetCode activity tells a story. Explore the tools that help you understand it, one insight at a time."
         />
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div
+          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+          data-feature-grid
+        >
           {features.map((feature, index) => {
             const Icon = feature.icon;
 
             return (
               <div
                 key={feature.title}
-                className="group relative overflow-hidden rounded-2xl border border-border bg-card/80 p-7 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-surface-light"
+                data-feature-card
+                className="group relative overflow-hidden rounded-2xl border border-border bg-card/80 p-7 transition-colors duration-300 hover:border-primary/40 hover:bg-surface-light"
               >
                 <div className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-primary/0 blur-3xl transition-all duration-300 group-hover:bg-primary/10" />
 
                 <div
                   className={`relative mb-6 flex h-12 w-12 items-center justify-center rounded-xl ${feature.iconBg}`}
+                  data-feature-icon
                 >
                   <Icon size={23} className={feature.color} />
                 </div>
@@ -177,18 +296,77 @@ function FeaturesSection() {
   );
 }
 
+
+
 function HowItWorksSection() {
+  const sectionRef = useRef(null);
+
+  useGSAP(
+    () => {
+      const section = sectionRef.current;
+
+      const heading = section.querySelector("[data-how-heading]");
+      const cards = section.querySelectorAll("[data-how-card]");
+      const icons = section.querySelectorAll("[data-how-icon]");
+
+      gsap.from(heading, {
+        y: 45,
+        opacity: 0,
+        duration: 0.9,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: section,
+          start: "top 75%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
+      gsap.from(cards, {
+        y: 65,
+        opacity: 0,
+        scale: 0.95,
+        duration: 0.85,
+        stagger: 0.2,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: section.querySelector("[data-how-grid]"),
+          start: "top 80%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
+      gsap.from(icons, {
+        scale: 0.5,
+        rotation: -20,
+        duration: 0.7,
+        stagger: 0.2,
+        ease: "back.out(1.7)",
+        scrollTrigger: {
+          trigger: section.querySelector("[data-how-grid]"),
+          start: "top 80%",
+          toggleActions: "play none none reverse",
+        },
+      });
+    },
+    { scope: sectionRef }
+  );
+
   return (
-    <section
+
+      <section
+      ref={sectionRef}
       id="how-it-works"
       className="relative scroll-mt-24 border-y border-border bg-surface/60 px-6 py-24 lg:py-32"
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(224,123,76,0.08),transparent_65%)]" />
 
-      <div className="relative mx-auto max-w-7xl">
+      <div
+        className="relative mx-auto max-w-7xl"
+        >
         <SectionHeading
-          eyebrow="Simple by design"
-          title={
+        eyebrow="Simple by design"
+        headingAttribute="data-how-heading"
+        title={
             <>
               Three steps.
               <br />
@@ -198,15 +376,24 @@ function HowItWorksSection() {
           description="Getting a better understanding of your coding progress shouldn't be complicated."
         />
 
-        <div className="relative grid gap-8 md:grid-cols-3">
+        <div
+        className="relative grid gap-8 md:grid-cols-3"
+        data-how-grid
+        >
           <div className="pointer-events-none absolute left-[17%] right-[17%] top-12 hidden border-t border-dashed border-primary/30 md:block" />
 
           {steps.map((step) => {
             const Icon = step.icon;
 
             return (
-              <div key={step.number} className="relative text-center">
-                <div className="relative mx-auto mb-7 flex h-24 w-24 items-center justify-center rounded-3xl border border-primary/25 bg-card shadow-[0_0_45px_rgba(224,123,76,0.08)]">
+              <div
+                key={step.number}
+                className="relative text-center"
+                data-how-card
+                >
+                    <div
+                        data-how-icon
+                        className="relative mx-auto mb-7 flex h-24 w-24 items-center justify-center rounded-3xl border border-primary/25 bg-card shadow-[0_0_45px_rgba(224,123,76,0.08)]">
                   <div className="absolute inset-2 rounded-2xl border border-border" />
                   <Icon size={30} className="relative text-primary" />
 
@@ -231,16 +418,77 @@ function HowItWorksSection() {
   );
 }
 
+
 function AboutSection() {
+  const sectionRef = useRef(null);
+
+  useGSAP(
+    () => {
+      const section = sectionRef.current;
+      if (!section) return;
+      
+      const leftContent = section.querySelector("[data-about-content]");
+      const analyticsCard = section.querySelector("[data-about-card]");
+      const progressBars = section.querySelectorAll("[data-about-progress]");
+
+      const mm = gsap.matchMedia();
+
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top 70%",
+            toggleActions: "play none none reverse",
+          },
+          defaults: {
+            ease: "power3.out",
+          },
+        });
+
+        tl.from(leftContent, {
+          x: -65,
+          opacity: 0,
+          duration: 0.9,
+        })
+          .from(
+            analyticsCard,
+            {
+              x: 65,
+              opacity: 0,
+              scale: 0.95,
+              duration: 1,
+            },
+            "-=0.65"
+          )
+          .from(
+            progressBars,
+            {
+              scaleX: 0,
+              transformOrigin: "left center",
+              duration: 0.9,
+              stagger: 0.15,
+              ease: "power2.out",
+            },
+            "-=0.4"
+          );
+      });
+
+      return () => mm.revert();
+    },
+    { scope: sectionRef }
+  );
+
   return (
+
     <section
+      ref={sectionRef}
       id="about"
       className="relative scroll-mt-24 overflow-hidden px-6 py-24 lg:py-32"
     >
       <div className="pointer-events-none absolute -right-32 top-10 h-96 w-96 rounded-full bg-primary/10 blur-[130px]" />
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-2 lg:gap-20">
-        <div>
+        <div data-about-content>
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
             <Lightbulb size={14} />
             Why we built this
@@ -276,7 +524,9 @@ function AboutSection() {
         <div className="relative mx-auto w-full max-w-lg">
           <div className="absolute inset-8 rounded-full bg-primary/15 blur-[80px]" />
 
-          <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-7 shadow-2xl shadow-black/20 sm:p-9">
+            <div
+                data-about-card
+                className="relative overflow-hidden rounded-3xl border border-border bg-card p-7 shadow-2xl shadow-black/20 sm:p-9">
             <div className="mb-8 flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-muted">
@@ -308,6 +558,7 @@ function AboutSection() {
 
                   <div className="h-2 overflow-hidden rounded-full bg-surface-light">
                     <div
+                      data-about-progress
                       className="h-full rounded-full bg-gradient-to-r from-primary to-[#e6b84a]"
                       style={{ width: item.width }}
                     />
@@ -346,9 +597,59 @@ function AboutSection() {
   );
 }
 
+
 function FinalCTASection() {
+  const sectionRef = useRef(null);
+
+  useGSAP(
+    () => {
+      const section = sectionRef.current;
+      if (!section) return;
+
+      const content = section.querySelector("[data-cta-content]");
+      const icon = section.querySelector("[data-cta-icon]");
+      const heading = section.querySelector("[data-cta-heading]");
+      const description = section.querySelector("[data-cta-description]");
+      const button = section.querySelector("[data-cta-button]");
+
+      const mm = gsap.matchMedia();
+
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top 75%",
+            toggleActions: "play none none reverse",
+          },
+          defaults: { ease: "power3.out" },
+        });
+
+        tl.from(content, { y: 35, opacity: 0, duration: 0.8 })
+          .from(icon, {
+            scale: 0.5,
+            rotation: -25,
+            duration: 0.65,
+            ease: "back.out(1.7)",
+          }, "-=0.45")
+          .from(
+            [heading, description, button],
+            {
+              y: 25,
+              opacity: 0,
+              duration: 0.7,
+              stagger: 0.15,
+            },
+            "-=0.3"
+          );
+      });
+
+      return () => mm.revert();
+    },
+    { scope: sectionRef }
+  );
+
   return (
-    <section className="px-6 pb-24">
+    <section ref={sectionRef} className="px-6 pb-24">
       <div className="relative mx-auto max-w-7xl overflow-hidden rounded-3xl border border-primary/25 bg-gradient-to-br from-[#382016] via-[#2b1b17] to-[#241823] px-7 py-16 text-center sm:px-12 lg:py-20">
         <div className="pointer-events-none absolute -left-20 -top-28 h-72 w-72 rounded-full bg-primary/20 blur-[100px]" />
         <div className="pointer-events-none absolute -bottom-32 -right-20 h-72 w-72 rounded-full bg-purple-500/15 blur-[100px]" />
@@ -356,23 +657,33 @@ function FinalCTASection() {
         <Sparkles className="absolute left-[12%] top-12 text-[#e6b84a]/70" size={22} />
         <Sparkles className="absolute bottom-12 right-[14%] text-primary/70" size={18} />
 
-        <div className="relative mx-auto max-w-2xl">
-          <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/30 bg-primary/10 text-primary">
+        <div data-cta-content className="relative mx-auto max-w-2xl">
+          <div
+            data-cta-icon
+            className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/30 bg-primary/10 text-primary"
+          >
             <Code2 size={28} />
           </div>
 
-          <h2 className="font-display text-3xl font-bold leading-tight text-text sm:text-4xl lg:text-5xl">
+          <h2
+            data-cta-heading
+            className="font-display text-3xl font-bold leading-tight text-text sm:text-4xl lg:text-5xl"
+          >
             Ready to decode
             <br />
             <span className="text-primary">your progress?</span>
           </h2>
 
-          <p className="mx-auto mt-5 max-w-lg text-sm leading-7 text-muted sm:text-base">
+          <p
+            data-cta-description
+            className="mx-auto mt-5 max-w-lg text-sm leading-7 text-muted sm:text-base"
+          >
             Your next breakthrough starts with understanding where you are
             today. Let's make every coding session count.
           </p>
 
           <Link
+            data-cta-button
             to="/dashboard"
             className="mt-8 inline-flex items-center gap-3 rounded-xl bg-primary px-7 py-4 text-sm font-bold text-[#1a1310] shadow-lg shadow-primary/20 transition-all hover:-translate-y-1 hover:bg-primary-hover"
           >
@@ -385,11 +696,50 @@ function FinalCTASection() {
   );
 }
 
+
 function LandingFooter() {
+  const footerRef = useRef(null);
+
+  useGSAP(
+    () => {
+      const footer = footerRef.current;
+      if (!footer) return;
+
+      const items = footer.querySelectorAll("[data-footer-item]");
+
+      const mm = gsap.matchMedia();
+
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.from(items, {
+          y: 25,
+          opacity: 0,
+          duration: 0.75,
+          stagger: 0.15,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: footer,
+            start: "top 90%",
+            toggleActions: "play none none reverse",
+          },
+        });
+      });
+
+      return () => mm.revert();
+    },
+    { scope: footerRef }
+  );
+
   return (
-    <footer className="border-t border-border bg-[#17110e] px-6 py-9">
+    <footer
+      ref={footerRef}
+      className="border-t border-border bg-[#17110e] px-6 py-9"
+    >
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-5 sm:flex-row">
-        <Link to="/" className="flex items-center gap-3">
+        <Link
+          to="/"
+          data-footer-item
+          className="flex items-center gap-3"
+        >
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-[#1a1310]">
             <Code2 size={21} />
           </div>
@@ -404,11 +754,15 @@ function LandingFooter() {
           </div>
         </Link>
 
-        <p className="text-center text-xs text-muted">
+        <p
+          data-footer-item
+          className="text-center text-xs text-muted"
+        >
           Built for curious minds. Keep learning, keep growing.
         </p>
 
         <Link
+          data-footer-item
           to="/dashboard"
           className="text-xs font-semibold text-primary transition-colors hover:text-text"
         >
@@ -418,6 +772,7 @@ function LandingFooter() {
     </footer>
   );
 }
+
 
 export default function LandingSections() {
   return (

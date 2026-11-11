@@ -11,15 +11,149 @@ import {
   Zap,
 } from "lucide-react";
 import heroImage from "../../assets/hero.png";
+import { lazy, Suspense, useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+const CosmicScene = lazy(() => import("./CosmicScene"));
+
 
 function HeroSection() {
+
+  const heroRef = useRef(null);
+
+useGSAP(
+  () => {
+    const mm = gsap.matchMedia();
+
+    // Run animations only when the user allows motion.
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      const tl = gsap.timeline({
+        defaults: {
+          ease: "power3.out",
+        },
+      });
+
+      // 1. Small eyebrow badge
+      tl.from("[data-hero-eyebrow]", {
+        y: 20,
+        opacity: 0,
+        duration: 0.7,
+      });
+
+      // 2. Main heading
+      tl.from(
+        "[data-hero-title]",
+        {
+          y: 45,
+          opacity: 0,
+          duration: 1,
+        },
+        "-=0.35"
+      );
+
+      // 3. Description
+      tl.from(
+        "[data-hero-description]",
+        {
+          y: 25,
+          opacity: 0,
+          duration: 0.8,
+        },
+        "-=0.5"
+      );
+
+      // 4. CTA buttons
+      tl.from(
+        "[data-hero-buttons]",
+        {
+          y: 20,
+          opacity: 0,
+          duration: 0.7,
+        },
+        "-=0.4"
+      );
+
+      // 5. Highlights
+      tl.from(
+        "[data-hero-highlights]",
+        {
+          y: 20,
+          opacity: 0,
+          duration: 0.7,
+        },
+        "-=0.35"
+      );
+
+      // 6. Girl illustration
+      tl.from(
+        "[data-hero-image]",
+        {
+          scale: 0.85,
+          y: 35,
+          opacity: 0,
+          duration: 1.2,
+          ease: "back.out(1.4)",
+        },
+        "-=1.1"
+      );
+
+      // 7. Floating analytics cards
+      tl.from(
+        "[data-hero-card]",
+        {
+          y: 35,
+          scale: 0.85,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: "back.out(1.5)",
+        },
+        "-=0.7"
+      );
+
+      // 8. Continuous floating motion
+      gsap.to("[data-hero-card]", {
+        y: -12,
+        duration: 2.2,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        stagger: {
+          each: 0.3,
+          from: "random",
+        },
+      });
+    });
+
+    return () => mm.revert();
+  },
+  { scope: heroRef }
+);
+
   return (
     <section
-      id="home"
-      className="relative isolate min-h-[calc(100vh-5rem)] overflow-hidden bg-background"
-    >
+    ref={heroRef}
+    id="home"
+    onPointerMove={(event) => {
+      const rect = event.currentTarget.getBoundingClientRect();
+
+      const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      window.dispatchEvent(
+        new CustomEvent("cosmic-pointer", {
+          detail: { x, y },
+        })
+      );
+    }}
+    className="relative isolate min-h-[calc(100vh-5rem)] overflow-hidden bg-background"
+  >
       {/* Background gradients */}
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        {/* 3D Cosmic Universe */}
+        <Suspense fallback={null}>
+          <CosmicScene />
+        </Suspense>
         <div className="absolute -left-40 top-10 h-[450px] w-[450px] rounded-full bg-primary/10 blur-[120px]" />
         <div className="absolute right-0 top-0 h-[550px] w-[550px] rounded-full bg-purple-500/10 blur-[140px]" />
         <div className="absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-gold/5 blur-[110px]" />
@@ -43,7 +177,9 @@ function HeroSection() {
         <div className="relative z-10 max-w-2xl">
 
           {/* Eyebrow */}
-          <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2">
+          <div
+            data-hero-eyebrow
+            className="mb-7 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2">
             <Sparkles size={14} className="text-gold" />
             <span className="text-xs font-semibold tracking-wider text-primary-hover">
               YOUR PERSONAL CODING COMPANION
@@ -52,7 +188,9 @@ function HeroSection() {
           </div>
 
           {/* Heading */}
-          <h1 className="font-display text-5xl font-bold leading-[1.12] tracking-tight text-text sm:text-6xl lg:text-[4.4rem]">
+          <h1
+            data-hero-title
+            className="font-display text-5xl font-bold leading-[1.12] tracking-tight text-text sm:text-6xl lg:text-[4.4rem]">
             Your LeetCode
             <br />
             journey,{" "}
@@ -76,14 +214,18 @@ function HeroSection() {
           </h1>
 
           {/* Description */}
-          <p className="mt-7 max-w-xl text-base leading-8 text-muted sm:text-lg">
+          <p
+            data-hero-description
+            className="mt-7 max-w-xl text-base leading-8 text-muted sm:text-lg">
             Stop solving blindly. Understand your progress, discover
             your patterns, and turn every submission into a smarter
             step towards becoming a better problem solver.
           </p>
 
           {/* CTA buttons */}
-          <div className="mt-9 flex flex-wrap items-center gap-4">
+          <div
+            data-hero-buttons
+            className="mt-9 flex flex-wrap items-center gap-4">
             <Link
               to="/dashboard"
               className="group flex items-center gap-3 rounded-xl bg-primary px-7 py-4 font-semibold text-background shadow-lg shadow-primary/20 transition-all duration-300 hover:-translate-y-1 hover:bg-primary-hover hover:shadow-primary/30"
@@ -108,7 +250,9 @@ function HeroSection() {
           </div>
 
           {/* Quick highlights */}
-          <div className="mt-12 flex flex-wrap items-center gap-x-7 gap-y-4 border-t border-border pt-7">
+          <div
+            data-hero-highlights
+            className="mt-12 flex flex-wrap items-center gap-x-7 gap-y-4 border-t border-border pt-7">
             <div className="flex items-center gap-2.5">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary/10">
                 <Code2 size={18} className="text-secondary" />
@@ -168,6 +312,7 @@ function HeroSection() {
 
               <div className="relative z-10 flex flex-col items-center gap-4 px-8 text-center">
                 <img
+                  data-hero-image
                   src={heroImage}
                   alt="Girl coding at her laptop"
                   className="relative z-10 mx-auto h-auto w-full max-w-[420px] object-contain drop-shadow-2xl"
@@ -177,7 +322,9 @@ function HeroSection() {
           </div>
 
           {/* Floating card: solved problems */}
-          <div className="absolute left-0 top-[16%] z-20 animate-[float_5s_ease-in-out_infinite] rounded-2xl border border-border bg-surface/90 p-4 shadow-2xl shadow-black/20 backdrop-blur-xl sm:left-[-2%]">
+          <div
+            data-hero-card
+            className="absolute left-0 top-[16%] z-20 animate-[float_5s_ease-in-out_infinite] rounded-2xl border border-border bg-surface/90 p-4 shadow-2xl shadow-black/20 backdrop-blur-xl sm:left-[-2%]">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary/15">
                 <Code2 size={20} className="text-secondary" />

@@ -2,9 +2,11 @@
 import LandingNavbar from "../components/landing/LandingNavbar";
 import HeroSection from "../components/landing/HeroSection";
 import LandingSections from "../components/landing/LandingSections";
+import SmoothScroll from "../components/landing/SmoothScroll";
 
 function LandingPage() {
   return (
+    <SmoothScroll>
     <div className="min-h-screen overflow-hidden bg-background text-text">
       <LandingNavbar />
 
@@ -12,7 +14,8 @@ function LandingPage() {
         <HeroSection />
         <LandingSections />
       </main>
-    </div>
+      </div>
+      </SmoothScroll>
   );
 }
 
