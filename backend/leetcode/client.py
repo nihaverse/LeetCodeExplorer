@@ -3,11 +3,11 @@ import time
 import requests
 from django.conf import settings
 
-# Free hosting sleeps when idle; the first request can take a minute to wake it up.
+# Free hosting sleeps when idle; waking it can take a minute or more.
 RETRY_STATUSES = {502, 503, 504}
-MAX_ATTEMPTS = 4
-RETRY_DELAY_SECONDS = 8
-REQUEST_TIMEOUT_SECONDS = 25
+RETRY_DELAY_SECONDS = 5
+REQUEST_TIMEOUT_SECONDS = 20
+RETRY_BUDGET_SECONDS = 120  # keep below the gunicorn timeout (150s)
 
 
 class UpstreamError(Exception):
@@ -19,28 +19,29 @@ class UpstreamError(Exception):
 
 def fetch(path):
     url = f"{settings.LEETCODE_API_BASE}{path}"
-    last_error = None
+    started = time.monotonic()
 
-    for attempt in range(MAX_ATTEMPTS):
-        if attempt:
-            time.sleep(RETRY_DELAY_SECONDS)
+    while True:
+        error = None
+        response = None
 
         try:
             response = requests.get(url, timeout=REQUEST_TIMEOUT_SECONDS)
         except requests.Timeout:
-            last_error = UpstreamError("LeetCode data source timed out.", 504)
-            continue
+            error = UpstreamError("LeetCode data source timed out.", 504)
         except requests.RequestException:
-            last_error = UpstreamError("Could not reach the LeetCode data source.", 502)
-            continue
+            error = UpstreamError("Could not reach the LeetCode data source.", 502)
+        else:
+            if response.status_code in RETRY_STATUSES:
+                error = UpstreamError("LeetCode data source returned an error.", 502)
 
-        if response.status_code in RETRY_STATUSES:
-            last_error = UpstreamError("LeetCode data source returned an error.", 502)
-            continue
+        if error is None:
+            break
 
-        break
-    else:
-        raise last_error
+        elapsed = time.monotonic() - started
+        if elapsed + RETRY_DELAY_SECONDS + REQUEST_TIMEOUT_SECONDS > RETRY_BUDGET_SECONDS:
+            raise error
+        time.sleep(RETRY_DELAY_SECONDS)
 
     if response.status_code == 429:
         raise UpstreamError("Rate limit reached. Please try again later.", 429)
