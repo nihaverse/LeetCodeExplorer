@@ -14,6 +14,7 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 import dj_database_url
+from datetime import timedelta
 
 load_dotenv()
 
@@ -48,6 +49,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'leetcode',
+    'accounts',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
@@ -156,3 +159,19 @@ CORS_ALLOWED_ORIGINS = [
 
 LEETCODE_API_BASE = os.getenv("LEETCODE_API_BASE", "http://localhost:3000")
 
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+    ),
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+}
