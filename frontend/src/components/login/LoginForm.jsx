@@ -8,14 +8,34 @@ import {
   ArrowRight,
   Globe,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { login } from "../../api/authClient";
 
 function LoginForm({ onSwitchToSignup }) {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Authentication will be integrated later.
+    if (loading) return;
+
+    const form = new FormData(event.currentTarget);
+    setError("");
+    setLoading(true);
+
+    try {
+      await login({
+        email: form.get("email"),
+        password: form.get("password"),
+      });
+      navigate("/dashboard", { replace: true });
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
   };
 
   return (
@@ -121,13 +141,25 @@ function LoginForm({ onSwitchToSignup }) {
             </button>
           </div>
 
+          {error && (
+            <p
+              role="alert"
+              className="rounded-xl border border-[#d9604f]/40 bg-[#d9604f]/10 px-4 py-3 text-sm text-[#f0a094]"
+            >
+              {error}
+            </p>
+          )}
+
           {/* Login Button */}
           <button
             type="submit"
-            className="group flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#d96c3d] to-[#ed966b] font-semibold text-[#1a100c] shadow-lg shadow-[#e07b4c]/20 transition duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#e07b4c]/30"
+            disabled={loading}
+            className="group flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#d96c3d] to-[#ed966b] font-semibold text-[#1a100c] shadow-lg shadow-[#e07b4c]/20 transition duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#e07b4c]/30 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
           >
-            Login
-            <ArrowRight className="h-[18px] w-[18px] transition-transform group-hover:translate-x-1" />
+            {loading ? "Logging in..." : "Login"}
+            {!loading && (
+              <ArrowRight className="h-[18px] w-[18px] transition-transform group-hover:translate-x-1" />
+            )}
           </button>
         </form>
 

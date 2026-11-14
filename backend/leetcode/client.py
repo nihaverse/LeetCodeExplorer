@@ -7,7 +7,7 @@ from django.conf import settings
 RETRY_STATUSES = {502, 503, 504}
 RETRY_DELAY_SECONDS = 5
 REQUEST_TIMEOUT_SECONDS = 20
-RETRY_BUDGET_SECONDS = 120  # keep below the gunicorn timeout (150s)
+RETRY_BUDGET_SECONDS = 90  # stay under Vercel's 120s proxy timeout and gunicorn's 150s
 
 
 class UpstreamError(Exception):
