@@ -175,3 +175,24 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
 }
+
+# --- Refresh token cookie + CSRF ---
+REFRESH_COOKIE_NAME = "lc_refresh"
+REFRESH_COOKIE_PATH = "/api/auth/"   # cookie is sent only to auth endpoints
+COOKIE_SECURE = not DEBUG            # HTTPS only in production
+COOKIE_SAMESITE = "Lax"
+
+# Render terminates HTTPS and forwards plain HTTP; this tells Django the original request was secure.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+CSRF_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_HTTPONLY = False         # the frontend must read it to send the X-CSRFToken header
+CSRF_TRUSTED_ORIGINS = [
+    o
+    for o in os.getenv(
+        "CSRF_TRUSTED_ORIGINS",
+        "http://localhost:5173,http://127.0.0.1:5173",
+    ).split(",")
+    if o
+]

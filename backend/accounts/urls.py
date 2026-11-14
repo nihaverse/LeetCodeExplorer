@@ -1,11 +1,12 @@
 from django.urls import path
-from rest_framework_simplejwt.views import TokenRefreshView
 
-from .views import login_view, signup_view, logout_view
+from .views import csrf_view, login_view, logout_view, me_view, refresh_view, signup_view
 
 urlpatterns = [
+    path("csrf/", csrf_view, name="csrf"),
     path("signup/", signup_view, name="signup"),
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
-    path("token/refresh/", TokenRefreshView.as_view(), name="token-refresh"),
+    path("token/refresh/", refresh_view, name="token-refresh"),
+    path("me/", me_view, name="me"),
 ]
