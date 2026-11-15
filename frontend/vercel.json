@@ -4,6 +4,10 @@
       "source": "/api/:path*",
       "destination": "https://leetcode-explorer-backend.onrender.com/api/:path*"
     },
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    {
+      "source": "/proxytest/:path*",
+      "destination": "https://leetcode-explorer-backend.onrender.com/api/:path*"
+    },
+    { "source": "/((?!api/|proxytest/).*)", "destination": "/index.html" }
   ]
 }
