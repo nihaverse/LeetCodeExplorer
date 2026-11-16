@@ -1,13 +1,9 @@
+
 {
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "https://leetcode-explorer-backend.onrender.com/api/:path*"
-    },
-    {
-      "source": "/proxytest/:path*",
-      "destination": "https://leetcode-explorer-backend.onrender.com/api/:path*"
-    },
-    { "source": "/((?!api/|proxytest/).*)", "destination": "/index.html" }
+      "source": "/proxytest",
+      "destination": "https://leetcode-explorer-backend.onrender.com/api/auth/csrf/"
+    }
   ]
 }
