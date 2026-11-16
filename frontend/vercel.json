@@ -1,9 +1,8 @@
-
 {
   "rewrites": [
     {
-      "source": "/proxytest",
-      "destination": "https://leetcode-explorer-backend.onrender.com/api/auth/csrf/"
+      "source": "/proxytest/:path*",
+      "destination": "https://leetcode-explorer-backend.onrender.com/api/:path*"
     }
   ]
 }
