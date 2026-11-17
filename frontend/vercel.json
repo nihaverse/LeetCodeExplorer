@@ -1,8 +1,5 @@
 {
   "rewrites": [
-    {
-      "source": "^/proxytest/(.*)$",
-      "destination": "https://leetcode-explorer-backend.onrender.com/api/$1"
-    }
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }
