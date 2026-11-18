@@ -1,5 +1,11 @@
 {
   "rewrites": [
+    { "source": "/api/auth/:action", "destination": "/api/index" },
+    { "source": "/api/auth/:action/", "destination": "/api/index" },
+    { "source": "/api/auth/token/:action", "destination": "/api/index" },
+    { "source": "/api/auth/token/:action/", "destination": "/api/index" },
+    { "source": "/api/profile/:username", "destination": "/api/index" },
+    { "source": "/api/profile/:username/", "destination": "/api/index" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }
