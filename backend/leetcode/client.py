@@ -37,7 +37,10 @@ def fetch(path):
             logger.warning("upstream request failed path=%s err=%s", path, exc)
             error = UpstreamError("Could not reach the LeetCode data source.", 502)
         else:
-            if response.status_code in RETRY_STATUSES:
+            routing = response.headers.get("x-render-routing", "")
+            if response.status_code in RETRY_STATUSES or (
+                response.status_code == 429 and "hibernate" in routing
+            ):
                 logger.warning(
                     "upstream retryable status=%s path=%s body=%s",
                     response.status_code, path, response.text[:200],
