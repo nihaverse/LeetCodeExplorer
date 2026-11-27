@@ -1,7 +1,10 @@
+import logging
 import time
 
 import requests
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 # Free hosting sleeps when idle; waking it can take a minute or more.
 RETRY_STATUSES = {502, 503, 504}
@@ -28,11 +31,17 @@ def fetch(path):
         try:
             response = requests.get(url, timeout=REQUEST_TIMEOUT_SECONDS)
         except requests.Timeout:
+            logger.warning("upstream timeout path=%s", path)
             error = UpstreamError("LeetCode data source timed out.", 504)
-        except requests.RequestException:
+        except requests.RequestException as exc:
+            logger.warning("upstream request failed path=%s err=%s", path, exc)
             error = UpstreamError("Could not reach the LeetCode data source.", 502)
         else:
             if response.status_code in RETRY_STATUSES:
+                logger.warning(
+                    "upstream retryable status=%s path=%s body=%s",
+                    response.status_code, path, response.text[:200],
+                )
                 error = UpstreamError("LeetCode data source returned an error.", 502)
 
         if error is None:
@@ -42,6 +51,12 @@ def fetch(path):
         if elapsed + RETRY_DELAY_SECONDS + REQUEST_TIMEOUT_SECONDS > RETRY_BUDGET_SECONDS:
             raise error
         time.sleep(RETRY_DELAY_SECONDS)
+
+    if response.status_code != 200:
+        logger.warning(
+            "upstream status=%s path=%s body=%s",
+            response.status_code, path, response.text[:200],
+        )
 
     if response.status_code == 429:
         raise UpstreamError("Rate limit reached. Please try again later.", 429)
