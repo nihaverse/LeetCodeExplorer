@@ -54,8 +54,9 @@ def fetch(path):
 
     if response.status_code != 200:
         logger.warning(
-            "upstream status=%s path=%s body=%s",
+            "upstream status=%s path=%s body=%s headers=%s",
             response.status_code, path, response.text[:200],
+            str(dict(response.headers))[:600],
         )
 
     if response.status_code == 429:
