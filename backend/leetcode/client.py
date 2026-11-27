@@ -8,6 +8,10 @@ logger = logging.getLogger(__name__)
 
 # Free hosting sleeps when idle; waking it can take a minute or more.
 RETRY_STATUSES = {502, 503, 504}
+LOG_HEADERS = {
+    "server", "rndr-id", "x-render-routing", "cf-mitigated",
+    "cf-ray", "retry-after", "via",
+}
 RETRY_DELAY_SECONDS = 5
 REQUEST_TIMEOUT_SECONDS = 20
 RETRY_BUDGET_SECONDS = 90  # stay under Vercel's 120s proxy timeout and gunicorn's 150s
@@ -58,8 +62,8 @@ def fetch(path):
     if response.status_code != 200:
         logger.warning(
             "upstream status=%s path=%s body=%s headers=%s",
-            response.status_code, path, response.text[:200],
-            str(dict(response.headers))[:600],
+            response.status_code, path, response.text[:80],
+            {k: v for k, v in response.headers.items() if k.lower() in LOG_HEADERS},
         )
 
     if response.status_code == 429:
